@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use crate::types;
 
-pub mod program {
+pub mod interpreter {
     pub struct Program {
         pub exprs: Vec<Expr>,
         pub state: ProgramState,

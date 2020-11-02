@@ -1,5 +1,5 @@
-mod program;
-pub use program;
+mod interpreter;
+pub use interpreter;
 mod types;
 pub use types;
 mod fileparser;
