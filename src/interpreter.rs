@@ -48,7 +48,7 @@ pub mod interpreter {
         fn eval(&self, cmd: Expr) -> Result<Value,&'static str> {
             match cmd {
                 Assign(name,expr) => {
-                    let val = eval(expr);
+                    let val = eval(expr)?;
                     match self.assign(name,val) {
                         Some(v) => Ok(v),
                         None => Ok(val),
@@ -62,19 +62,19 @@ pub mod interpreter {
                 }
                 Const(num) => Ok(Num(num)),
                 Plus(expr1,expr2) => {
-                    let v1 = eval(expr1);
-                    let v2 = eval(expr2);
+                    let v1 = eval(expr1)?;
+                    let v2 = eval(expr2)?;
                     match v1,v2 {
                         Num(n1),Num(n2) => Ok(Num(n1+n2)),
                         other => Err("can't add non-number exprs"),
                     }
                 }
                 Mult(expr1,expr2) => {
-                    let v1 = eval(expr1);
-                    let v2 = eval(expr2);
+                    let v1 = eval(expr1)?;
+                    let v2 = eval(expr2)?;
                     match v1,v2 {
                         Num(n1),Num(n2) => Ok(Num(n1*n2)),
-                        other => Err("can't add non-number exprs"),
+                        other => Err("can't mult non-number exprs"),
                     }
                 }
             }
