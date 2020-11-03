@@ -24,22 +24,25 @@ pub mod fileparser {
                 }
             }
         }
-        pub fn run_cmd(state: ProgramState, cmd: &str) -> Result<ProgramState, Box<dyn Error>> {
+
+        pub fn parse_cmd(state: ProgramState, cmd: &str) -> Result<Expr, Box<dyn Error>> {
             let mut cmd_iter = cmd.split_whitespace();
             match cmd_iter.next() {
                 Some("whirr") => {
                     let var_name = cmd_iter.next();
                     let value = cmd_iter.next() match {
-                        Some("beep") | Some("boop") => read_num(cmd_iter),
+                        Some("beep") | Some("boop") => Const(parse_num(cmd_iter)),
                     }
+                    Assign(var_name,value)
                 },
                 None => {},
                 other => eprintln!("Failed to parse at {}",other),
             }
         }
-        pub fn run_program() -> Result<ProgramState, Box<dyn Error>> {
-            let initial_state = ProgramState::new();
-            lines.iter().fold(initial_state, run_cmd);
-        }
+
+        // pub fn run_program() -> Result<ProgramState, Box<dyn Error>> {
+        //     let initial_state = ProgramState::new();
+        //     lines.iter().fold(initial_state, run_cmd);
+        // }
     }
 }
