@@ -50,6 +50,7 @@ impl BeepboopFile {
                 }
             },
             None => Err("Syntax error lmao"),
+            other => Err("Syntax error lmao"),
         }
     }
 

@@ -5,29 +5,29 @@ use crate::types::Expr::*;
 use crate::types::Value::*;
 
 // pub mod interpreter {
+fn run_cmd(mut state: ProgramState, cmd: Expr) -> ProgramState {
+    match state.eval(cmd) {
+        Ok(val) => state,
+        Err(error) => {
+            eprintln!("{}",error);
+            state
+        },
+
+    }
+}
+
 pub struct Program {
     pub exprs: Vec<Expr>,
     pub state: ProgramState,
 }
 impl Program {
-    pub fn run_cmd(&self, state: ProgramState, cmd: Expr) -> Result<ProgramState, &'static str> {
-        Ok(state)
-    }
-    pub fn run_program(&mut self) {
-        let initial_state = ProgramState::new();
-        self.state = self.exprs.iter().fold(initial_state, |acc,x| -> ProgramState {
-            match self.run_cmd(acc,*x) {
-                Ok(state) => state,
-                Err(error) => {
-                    eprintln!("{}",error);
-                    acc
-                },
-            }
-        });
+    pub fn run_program(self) -> ProgramState {
+        self.exprs.into_iter().fold(self.state, run_cmd)
     }
 }
 
 
+// #[derive(Copy, Clone)]
 pub struct ProgramState {
     pub env: HashMap<String,Value>,
 }
@@ -42,11 +42,8 @@ impl ProgramState {
     pub fn assign(&mut self, name: String, val: Value) -> Option<Value> {
         self.env.insert(name,val)
     }
-    pub fn lookup(&self, name: String) -> Option<Value> {
-        match self.env.get(&name) {
-            Some(item) => Some(*item),
-            None => None,
-        }
+    pub fn lookup(&self, name: String) -> Option<&Value> {
+        self.env.get(&name)
     }
 
     fn eval(&mut self, cmd: Expr) -> Result<Value,&'static str> {
@@ -54,13 +51,15 @@ impl ProgramState {
             Assign(name,expr) => {
                 let val = self.eval(*expr)?;
                 match self.assign(name,val) {
-                    Some(v) => Ok(v),
+                    Some(v) => {
+                        Ok(val)
+                    }
                     None => Ok(val),
                 }
             }
             Lookup(name) => {
                 match self.lookup(name) {
-                    Some(v) => Ok(v),
+                    Some(v) => Ok(*v),
                     None => Err("item not found")
                 }
             }
