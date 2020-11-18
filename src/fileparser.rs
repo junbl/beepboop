@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::BufReader;
 use std::io::BufRead;
+use crate::types::BeepboopError;
 use crate::types::Expr;
 use crate::types::Expr::*;
 // use crate::types::Value::*;
@@ -9,20 +10,20 @@ use crate::interpreter::*;
 
 // pub mod fileparser {
 
-pub fn parse_num<'a, I>(num_iter: I) -> Result<i32, &'static str>
+pub fn parse_num<'a, I>(num_iter: I) -> Result<i32, BeepboopError>
 where
     I: Iterator<Item = &'a str>,
 {
-    num_iter.fold(Ok(0),|total,digit| -> Result<i32,&'static str> {
+    num_iter.fold(Ok(0),|total,digit| -> Result<i32, BeepboopError> {
         match digit {
             "beep" => Ok((total? << 1) + 1),
             "boop" => Ok(total? << 1),
-            other => return Err("that's not a number"),
+            other => return Err(BeepboopError::ParseError),
         }
     })
 }
 
-pub fn parse_cmd(state: ProgramState, cmd: &str) -> Result<Expr, &'static str> {
+pub fn parse_cmd(state: ProgramState, cmd: &str) -> Result<Expr, BeepboopError> {
     let mut cmd_iter = cmd.split_whitespace().into_iter();
     match cmd_iter.next() {
         Some("whirr") => {
@@ -31,11 +32,11 @@ pub fn parse_cmd(state: ProgramState, cmd: &str) -> Result<Expr, &'static str> {
                 Ok(Assign(var_name.to_string(),Box::new(Const(target_num))))
             }
             else {
-                Err("No variable name provided")
+                Err(BeepboopError::ParseError)
             }
         },
-        None => Err("Syntax error lmao"),
-        other => Err("Syntax error lmao"),
+        None => Err(BeepboopError::SyntaxError),
+        other => Err(BeepboopError::SyntaxError),
     }
 }
 
@@ -56,7 +57,7 @@ impl BeepboopFile {
     }
 
 
-    // pub fn run_program() -> Result<ProgramState, &'static str> {
+    // pub fn run_program() -> Result<ProgramState, Error::ParseError> {
     //     let initial_state = ProgramState::new();
     //     lines.iter().fold(initial_state, run_cmd);
     // }

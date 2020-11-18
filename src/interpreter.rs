@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use crate::types::BeepboopError;
 use crate::types::Expr;
 use crate::types::Value;
 use crate::types::Expr::*;
@@ -46,7 +47,7 @@ impl ProgramState {
         self.env.get(&name)
     }
 
-    fn eval(&mut self, cmd: Expr) -> Result<Value,&'static str> {
+    fn eval(&mut self, cmd: Expr) -> Result<Value,BeepboopError> {
         match cmd {
             Assign(name,expr) => {
                 let val = self.eval(*expr)?;
@@ -60,7 +61,7 @@ impl ProgramState {
             Lookup(name) => {
                 match self.lookup(name) {
                     Some(v) => Ok(*v),
-                    None => Err("item not found")
+                    None => Err(BeepboopError::SyntaxError)
                 }
             }
             Const(num) => Ok(Num(num)),
@@ -69,7 +70,7 @@ impl ProgramState {
                 let v2 = self.eval(*expr2)?;
                 match (v1,v2) {
                     (Num(n1),Num(n2)) => Ok(Num(n1+n2)),
-                    other => Err("can't add non-number exprs"),
+                    other => Err(BeepboopError::SyntaxError),
                 }
             }
             Mult(expr1,expr2) => {
@@ -77,7 +78,7 @@ impl ProgramState {
                 let v2 = self.eval(*expr2)?;
                 match (v1,v2) {
                     (Num(n1),Num(n2)) => Ok(Num(n1*n2)),
-                    other => Err("can't mult non-number exprs"),
+                    other => Err(BeepboopError::SyntaxError),
                 }
             }
         }
