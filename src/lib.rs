@@ -1,4 +1,4 @@
-mod interpreter;
-mod types;
-mod fileparser;
+pub mod interpreter;
+pub mod types;
+pub mod fileparser;
 
