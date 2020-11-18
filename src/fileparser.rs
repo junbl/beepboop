@@ -1,48 +1,61 @@
-use std::fs;
+use std::fs::File;
+use std::io::BufReader;
+use std::io::BufRead;
+use crate::types::Expr;
+use crate::types::Expr::*;
+// use crate::types::Value::*;
+use crate::interpreter::*;
+// use crate::interpreter::ProgramState;
 
-pub mod fileparser {
-
-    pub struct BeepboopFile {
-        pub filename: String,
-        pub lines: Vec<&str>,
-    }
-
-    impl BeepboopFile {
-        pub fn new(new_filename: &String) -> Result<BeepboopFile, &'static str> {
-            let filename = new_filename.clone();
-            let contents = fs::read_to_string(filename)?;
-            let lines = contents.collect::<Vec<&str>>();
-        }
-        fn parse_num(num_iter: Iterator::&str) -> Result<i32,Box<dyn Error>> {
-            let mut bin_str = "";
-            let mut digit_list = Vec<bool>::new();
-            while let Some(digit) = num_iter.next() {
-                match digit {
-                    "beep" => 1,
-                    "boop" => 0,
-                    other => eprintln!("Failed to parse at {}",other),
-                }
-            }
-        }
-
-        pub fn parse_cmd(state: ProgramState, cmd: &str) -> Result<Expr, Box<dyn Error>> {
-            let mut cmd_iter = cmd.split_whitespace();
-            match cmd_iter.next() {
-                Some("whirr") => {
-                    let var_name = cmd_iter.next();
-                    let value = cmd_iter.next() match {
-                        Some("beep") | Some("boop") => Const(parse_num(cmd_iter)),
-                    }
-                    Assign(var_name,value)
-                },
-                None => {},
-                other => eprintln!("Failed to parse at {}",other),
-            }
-        }
-
-        // pub fn run_program() -> Result<ProgramState, Box<dyn Error>> {
-        //     let initial_state = ProgramState::new();
-        //     lines.iter().fold(initial_state, run_cmd);
-        // }
-    }
+// pub mod fileparser {
+pub struct BeepboopFile {
+    pub lines: Vec::<String>,
 }
+
+impl BeepboopFile {
+    pub fn new(filename: String) -> Self {
+        let f = File::open(filename).unwrap();
+        let f = BufReader::new(f);
+
+        let lines = f.lines().collect();
+        match lines {
+            Ok(lines) => BeepboopFile {lines},
+            Err(error) => panic!("Couldn't read file!"),
+        }
+    }
+
+    pub fn parse_num<'a, I>(&self, num_iter: I) -> Result<i32, &'static str>
+    where
+        I: Iterator<Item = &'a str>,
+    {
+        num_iter.fold(Ok(0),|total,digit| -> Result<i32,&'static str> {
+            match digit {
+                "beep" => Ok((total? << 1) + 1),
+                "boop" => Ok(total? << 1),
+                other => return Err("that's not a number"),
+            }
+        })
+    }
+
+    pub fn parse_cmd(&self, state: ProgramState, cmd: &str) -> Result<Expr, &'static str> {
+        let mut cmd_iter = cmd.split_whitespace().into_iter();
+        match cmd_iter.next() {
+            Some("whirr") => {
+                if let Some(var_name) = cmd_iter.next() {
+                    let target_num: i32 = self.parse_num(cmd_iter)?;
+                    Ok(Assign(var_name.to_string(),Box::new(Const(target_num))))
+                }
+                else {
+                    Err("No variable name provided")
+                }
+            },
+            None => Err("Syntax error lmao"),
+        }
+    }
+
+    // pub fn run_program() -> Result<ProgramState, &'static str> {
+    //     let initial_state = ProgramState::new();
+    //     lines.iter().fold(initial_state, run_cmd);
+    // }
+}
+// }
