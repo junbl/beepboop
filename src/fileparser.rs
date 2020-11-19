@@ -18,7 +18,7 @@ where
         match digit {
             "beep" => Ok((total? << 1) + 1),
             "boop" => Ok(total? << 1),
-            other => return Err(BeepboopError::ParseError),
+            other => Err(BeepboopError::ParseError), //TODO return iterator. no err handling in here
         }
     })
 }
@@ -35,13 +35,28 @@ pub fn parse_cmd(state: ProgramState, cmd: &str) -> Result<Expr, BeepboopError> 
                 Err(BeepboopError::ParseError)
             }
         },
+        // Some("bop") => { // for
+        //
+        // }
+        // Some("bip") => { // if
+        //
+        // }
+        // Some("ding") => { // return
+        //
+        // }
+        // Some("clank") => { // open parenthesis
+        //
+        // }
+        // Some("clonk") => { // close parenthesis
+        //
+        // }
         None => Err(BeepboopError::SyntaxError),
         other => Err(BeepboopError::SyntaxError),
     }
 }
 
 pub struct BeepboopFile {
-    pub lines: Vec::<String>,
+    pub lines: Vec<String>,
 }
 
 impl BeepboopFile {

@@ -10,7 +10,12 @@ pub enum Expr {
     Const(i32),
     Plus(Box<Expr>,Box<Expr>),
     Mult(Box<Expr>,Box<Expr>),
+    // IfThenElse(Box<Expr>,Box<Expr>,Box<Expr>),
 }
+// pub enum List<T> {
+//     Empty,
+//     Cons(Expr,Box<List<T>>),
+// }
 #[derive(Copy, Clone,Debug,PartialEq)]
 pub enum Value {
     Num(i32),

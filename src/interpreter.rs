@@ -61,7 +61,7 @@ impl ProgramState {
             Lookup(name) => {
                 match self.lookup(name) {
                     Some(v) => Ok(*v),
-                    None => Err(BeepboopError::SyntaxError)
+                    None => Err(BeepboopError::SyntaxError),
                 }
             }
             Const(num) => Ok(Num(num)),
