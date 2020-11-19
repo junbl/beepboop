@@ -3,6 +3,7 @@ use std::fmt;
 
 // pub mod types {
 // #[derive(Copy, Clone)]
+#[derive(PartialEq)]
 pub enum Expr {
     Assign(String,Box<Expr>),
     Lookup(String),
@@ -10,7 +11,7 @@ pub enum Expr {
     Plus(Box<Expr>,Box<Expr>),
     Mult(Box<Expr>,Box<Expr>),
 }
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone,Debug,PartialEq)]
 pub enum Value {
     Num(i32),
     Bin(bool),

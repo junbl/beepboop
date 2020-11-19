@@ -6,7 +6,7 @@ use crate::types::Expr::*;
 use crate::types::Value::*;
 
 // pub mod interpreter {
-fn run_cmd(mut state: ProgramState, cmd: Expr) -> ProgramState {
+pub fn run_cmd(mut state: ProgramState, cmd: Expr) -> ProgramState {
     match state.eval(cmd) {
         Ok(val) => state,
         Err(error) => {
@@ -47,7 +47,7 @@ impl ProgramState {
         self.env.get(&name)
     }
 
-    fn eval(&mut self, cmd: Expr) -> Result<Value,BeepboopError> {
+    pub fn eval(&mut self, cmd: Expr) -> Result<Value,BeepboopError> {
         match cmd {
             Assign(name,expr) => {
                 let val = self.eval(*expr)?;
