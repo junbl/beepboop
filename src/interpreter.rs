@@ -2,13 +2,13 @@ use std::collections::HashMap;
 use crate::types::BeepboopError;
 use crate::types::Expr;
 use crate::types::Value;
-use crate::types::Expr::*;
-use crate::types::Value::*;
+// use crate::types::Expr::*;
+// use crate::types::Value::*;
 
 // pub mod interpreter {
 pub fn run_cmd(mut state: ProgramState, cmd: Expr) -> ProgramState {
     match state.eval(cmd) {
-        Ok(val) => state,
+        Ok(_val) => state,
         Err(error) => {
             eprintln!("{}",error);
             state
@@ -22,19 +22,25 @@ pub struct Program {
     pub state: ProgramState,
 }
 impl Program {
-    pub fn run_program(self) -> ProgramState {
-        self.exprs.into_iter().fold(self.state, run_cmd)
+    pub fn new(exprs: Vec<Expr>) -> Self {
+        let state = ProgramState::new();
+        Program {exprs, state}
+    }
+    pub fn run_program(mut self) -> ProgramState {
+        self.state = self.exprs.into_iter().fold(self.state, run_cmd);
+        self.state
     }
 }
 
 
 // #[derive(Copy, Clone)]
+#[derive(Debug)]
 pub struct ProgramState {
     pub env: HashMap<String,Value>,
 }
 impl ProgramState {
     pub fn new() -> Self {
-        let env = HashMap::new();
+        let env: HashMap<String,Value> = HashMap::new();
         ProgramState {env}
     }
     pub fn contains(&self, name: String) -> bool {
@@ -49,39 +55,50 @@ impl ProgramState {
 
     pub fn eval(&mut self, cmd: Expr) -> Result<Value,BeepboopError> {
         match cmd {
-            Assign(name,expr) => {
+            Expr::Assign(name,expr) => {
                 let val = self.eval(*expr)?;
                 match self.assign(name,val) {
-                    Some(v) => {
+                    Some(_v) => {
                         Ok(val)
                     }
                     None => Ok(val),
                 }
             }
-            Lookup(name) => {
+            Expr::Lookup(name) => {
                 match self.lookup(name) {
                     Some(v) => Ok(*v),
                     None => Err(BeepboopError::SyntaxError),
                 }
             }
-            Const(num) => Ok(Num(num)),
-            Plus(expr1,expr2) => {
+            Expr::Const(num) => Ok(Value::Num(num)),
+            Expr::Plus(expr1,expr2) => {
                 let v1 = self.eval(*expr1)?;
                 let v2 = self.eval(*expr2)?;
                 match (v1,v2) {
-                    (Num(n1),Num(n2)) => Ok(Num(n1+n2)),
-                    other => Err(BeepboopError::SyntaxError),
+                    (Value::Num(n1),Value::Num(n2)) => Ok(Value::Num(n1+n2)),
+                    _other => Err(BeepboopError::SyntaxError),
                 }
             }
-            Mult(expr1,expr2) => {
+            Expr::Mult(expr1,expr2) => {
                 let v1 = self.eval(*expr1)?;
                 let v2 = self.eval(*expr2)?;
                 match (v1,v2) {
-                    (Num(n1),Num(n2)) => Ok(Num(n1*n2)),
-                    other => Err(BeepboopError::SyntaxError),
+                    (Value::Num(n1),Value::Num(n2)) => Ok(Value::Num(n1*n2)),
+                    _other => Err(BeepboopError::SyntaxError),
                 }
             }
+            // Expr::And(expr1, expr2)
+            // Expr::Or(expr1, expr2)
+            // Expr::Equals(expr1, expr2)
+            // Expr::Greater(expr1, expr2)
+            // Expr::Less(expr1, expr2)
+            // Expr::IfThenElse(condition, if_true, if_false)
+            // Expr::For(iter, range, expr)
+            // Expr::Function(arg, body, state)
+            // Expr::Fold(initial, list, function)
         }
     }
 }
+// impl Display for ProgramState {
+    
 // }

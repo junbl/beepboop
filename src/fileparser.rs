@@ -3,10 +3,7 @@ use std::io::BufReader;
 use std::io::BufRead;
 use crate::types::BeepboopError;
 use crate::types::Expr;
-use crate::types::Expr::*;
-// use crate::types::Value::*;
-use crate::interpreter::*;
-// use crate::interpreter::ProgramState;
+use crate::interpreter;
 
 // pub mod fileparser {
 
@@ -23,13 +20,14 @@ where
     })
 }
 
-pub fn parse_cmd(state: ProgramState, cmd: &str) -> Result<Expr, BeepboopError> {
+pub fn parse_cmd(cmd: &str) -> Result<Expr, BeepboopError> {
     let mut cmd_iter = cmd.split_whitespace().into_iter();
     match cmd_iter.next() {
         Some("whirr") => {
             if let Some(var_name) = cmd_iter.next() {
                 let target_num: i32 = parse_num(cmd_iter)?;
-                Ok(Assign(var_name.to_string(),Box::new(Const(target_num))))
+                Ok(Expr::Assign(var_name.to_string(),
+                    Box::new(Expr::Const(target_num))))
             }
             else {
                 Err(BeepboopError::ParseError)
@@ -51,9 +49,10 @@ pub fn parse_cmd(state: ProgramState, cmd: &str) -> Result<Expr, BeepboopError> 
         //
         // }
         None => Err(BeepboopError::SyntaxError),
-        other => Err(BeepboopError::SyntaxError),
+        _ => Err(BeepboopError::SyntaxError),
     }
 }
+
 
 pub struct BeepboopFile {
     pub lines: Vec<String>,
@@ -67,8 +66,18 @@ impl BeepboopFile {
         let lines = f.lines().collect();
         match lines {
             Ok(lines) => BeepboopFile {lines},
-            Err(error) => panic!("Couldn't read file!"),
+            Err(error) => panic!("Couldn't read file! {}",error),
         }
+    }
+    pub fn parse_file(self) -> interpreter::Program {
+        let mut expr_vec: Vec<Expr> = Vec::new();
+        for line in self.lines {
+            match parse_cmd(&line) {
+                Ok(expr) => expr_vec.push(expr),
+                Err(error) => panic!("Error while parsing file! {}",error),
+            }
+        }
+        interpreter::Program::new(expr_vec)
     }
 
 

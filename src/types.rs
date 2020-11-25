@@ -11,6 +11,15 @@ pub enum Expr {
     Plus(Box<Expr>,Box<Expr>),
     Mult(Box<Expr>,Box<Expr>),
     // IfThenElse(Box<Expr>,Box<Expr>,Box<Expr>),
+    // Expr::And(expr1, expr2)
+    // Expr::Or(expr1, expr2)
+    // Expr::Equals(expr1, expr2)
+    // Expr::Greater(expr1, expr2)
+    // Expr::Less(expr1, expr2)
+    // Expr::IfThenElse(condition, if_true, if_false)
+    // Expr::For(iter, range, expr)
+    // Expr::Function(arg, body, state)
+    // Expr::Fold(initial, list, function)
 }
 // pub enum List<T> {
 //     Empty,
