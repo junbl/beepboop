@@ -60,14 +60,21 @@ pub struct BeepboopFile {
 
 impl BeepboopFile {
     pub fn new(filename: String) -> Self {
-        let f = File::open(filename).unwrap();
+        let f = File::open(filename).expect("File not found!");
         let f = BufReader::new(f);
 
-        let lines = f.lines().collect();
-        match lines {
-            Ok(lines) => BeepboopFile {lines},
-            Err(error) => panic!("Couldn't read file! {}",error),
+        let mut lines: Vec<String> = Vec::new();
+        for line in f.lines() {
+            match line {
+                Ok(l) => {
+                    println!("{}",l);
+                    lines.push(l);
+
+                },
+                Err(error) => panic!("Couldn't read file! {}",error),
+            }
         }
+        BeepboopFile {lines}
     }
     pub fn parse_file(self) -> interpreter::Program {
         let mut expr_vec: Vec<Expr> = Vec::new();
