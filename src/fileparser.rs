@@ -60,6 +60,7 @@ pub struct BeepboopFile {
 
 impl BeepboopFile {
     pub fn new(filename: String) -> Self {
+        // let f = File::open(String::from("./code/var_assign.txt")).expect("File not found!");
         let f = File::open(filename).expect("File not found!");
         let f = BufReader::new(f);
 
@@ -67,7 +68,7 @@ impl BeepboopFile {
         for line in f.lines() {
             match line {
                 Ok(l) => {
-                    println!("{}",l);
+                    println!("[read] {}",l);
                     lines.push(l);
 
                 },

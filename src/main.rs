@@ -5,7 +5,9 @@ mod interpreter;
 mod types;
 
 fn main() {
-    for file in env::args() {
+    let mut arguments = env::args();
+    arguments.next();
+    for file in arguments {
         println!("parsing file {:?}",file);
         let bbfile = fileparser::BeepboopFile::new(file);
 
