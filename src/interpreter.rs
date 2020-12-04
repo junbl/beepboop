@@ -2,8 +2,6 @@ use std::collections::HashMap;
 use crate::types::BeepboopError;
 use crate::types::Expr;
 use crate::types::Value;
-// use crate::types::Expr::*;
-// use crate::types::Value::*;
 
 // pub mod interpreter {
 pub fn run_cmd(mut state: ProgramState, cmd: Expr) -> ProgramState {
@@ -188,6 +186,3 @@ impl ProgramState {
         }
     }
 }
-// impl Display for ProgramState {
-    
-// }

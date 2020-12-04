@@ -23,23 +23,6 @@ where
     Ok(total)
 }
 
-// pub fn parse_n_args<'a, I>(cmd_iter: &mut I, n: i32) -> Result<Vec<Expr>, BeepboopError>
-// where
-//     I: Iterator<Item = &'a str>,
-// {
-//     let mut parsed_exprs: Vec<Expr> = Vec::new();
-//     for _ in 0..n {
-//         if cmd_iter.next() == Some("clank") {
-//             parsed_exprs.push(parse_cmd_helper(cmd_iter)?);
-//         }
-//         else {
-//             return Err(BeepboopError::SyntaxError)
-//         }
-//     }
-//     Ok(parsed_exprs)
-// }
-
-
 pub fn parse_cmd(cmd: &str) -> Result<Expr, BeepboopError> {
     let mut cmd_iter = cmd.split_whitespace().into_iter();
     parse_cmd_helper(&mut cmd_iter)
@@ -54,11 +37,7 @@ where
             let target_num: i32 = parse_num(cmd_iter)?;
             println!("number: {}",target_num);
             Ok(Expr::Const(target_num))
-        }
-        // Some("beep") => { // numbers
-        //     let target_num: i32 = (parse_num(&mut cmd_iter)? << 1) + 1;
-        //     Ok(Expr::Const(target_num))
-        // }
+        },
         Some("whirr") => { // variable assignment
             println!("assign");
             if let Some(var_name) = cmd_iter.next() {
@@ -142,15 +121,9 @@ where
             let e_body = parse_cmd_helper(cmd_iter)?;
             Ok(Expr::For(Box::new(e_loops),Box::new(e_body)))
         }
-        // Some("ding") => { // return
-        //
-        // }
         Some("clank") => { // open parenthesis
             parse_cmd_helper(cmd_iter)
         }
-        // Some("clonk") => { // close parenthesis
-       
-        // }
         None => {
             eprintln!("tried to parse empty string");
             Err(BeepboopError::ParseError)
@@ -166,7 +139,6 @@ pub struct BeepboopFile {
 
 impl BeepboopFile {
     pub fn new(filename: String) -> Self {
-        // let f = File::open(String::from("./code/var_assign.txt")).expect("File not found!");
         let f = File::open(filename).expect("File not found!");
         let f = BufReader::new(f);
 
@@ -194,10 +166,5 @@ impl BeepboopFile {
         interpreter::Program::new(expr_vec)
     }
 
-
-    // pub fn run_program() -> Result<ProgramState, Error::ParseError> {
-    //     let initial_state = ProgramState::new();
-    //     lines.iter().fold(initial_state, run_cmd);
-    // }
 }
 // }
