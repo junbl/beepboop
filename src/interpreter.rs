@@ -43,9 +43,9 @@ impl ProgramState {
         let env: HashMap<String,Value> = HashMap::new();
         ProgramState {env}
     }
-    pub fn contains(&self, name: String) -> bool {
-        self.env.contains_key(&name)
-    }
+    // pub fn contains(&self, name: String) -> bool {
+    //     self.env.contains_key(&name)
+    // }
     pub fn assign(&mut self, name: String, val: Value) -> Option<Value> {
         self.env.insert(name,val)
     }
@@ -88,26 +88,75 @@ impl ProgramState {
                 }
             }
             Expr::Negate(expr) => {
-                if let Value::Num(v) = self.eval(*expr)? {
-                    Ok(Value::Num(-v))
-                }
-                else {
-                    Err(BeepboopError::SyntaxError)
+                let val = self.eval(*expr)?;
+                match val {
+                    Value::Num(n) => Ok(Value::Num(-n)),
+                    Value::Bin(b) => Ok(Value::Bin(!b)),
+                    _other => Err(BeepboopError::SyntaxError),
                 }
 
             }
-            // Expr::And(expr1, expr2)
-            // Expr::Or(expr1, expr2)
-            // Expr::Equals(expr1, expr2)
-            // Expr::Greater(expr1, expr2)
-            // Expr::Less(expr1, expr2)
+            Expr::And(expr1, expr2) => {
+                let v1 = self.eval(*expr1)?;
+                let v2 = self.eval(*expr2)?;
+                match (v1,v2) {
+                    (Value::Bin(b1),Value::Bin(b2)) => Ok(Value::Bin(b1 && b2)),
+                    _other => Err(BeepboopError::SyntaxError),
+                }
+            }
+            Expr::Or(expr1, expr2) => {
+                let v1 = self.eval(*expr1)?;
+                let v2 = self.eval(*expr2)?;
+                match (v1,v2) {
+                    (Value::Bin(b1),Value::Bin(b2)) => Ok(Value::Bin(b1 || b2)),
+                    _other => Err(BeepboopError::SyntaxError),
+                }
+            }
+            Expr::Equal(expr1, expr2) => {
+                let v1 = self.eval(*expr1)?;
+                let v2 = self.eval(*expr2)?;
+                match (v1,v2) {
+                    (Value::Num(n1),Value::Num(n2)) => Ok(Value::Bin(n1==n2)),
+                    (Value::Bin(b1),Value::Bin(b2)) => Ok(Value::Bin(b1==b2)),
+                    _other => Err(BeepboopError::SyntaxError),
+                }
+            }
+            Expr::Greater(expr1, expr2) => {
+                let v1 = self.eval(*expr1)?;
+                let v2 = self.eval(*expr2)?;
+                match (v1,v2) {
+                    (Value::Num(n1),Value::Num(n2)) => Ok(Value::Bin(n1 > n2)),
+                    _other => Err(BeepboopError::SyntaxError),
+                }
+            }
+            Expr::Less(expr1, expr2) => {
+                let v1 = self.eval(*expr1)?;
+                let v2 = self.eval(*expr2)?;
+                match (v1,v2) {
+                    (Value::Num(n1),Value::Num(n2)) => Ok(Value::Bin(n1 < n2)),
+                    _other => Err(BeepboopError::SyntaxError),
+                }
+            }
             Expr::IfThenElse(condition, if_true, if_false) => {
                 let vcon = self.eval(*condition)?;
-                if vcon == Value::Num(0) {
-                    self.eval(*if_false)
-                }
-                else {
-                    self.eval(*if_true)
+                match vcon {
+                    Value::Num(n) => {
+                        if n != 0 {
+                            self.eval(*if_true)
+                        }
+                        else {
+                            self.eval(*if_false)
+                        }
+                    }
+                    Value::Bin(b) => {
+                        if b {
+                            self.eval(*if_true)
+                        }
+                        else {
+                            self.eval(*if_false)
+                        }
+                    }
+                    _other => Err(BeepboopError::SyntaxError),
                 }
             }
             Expr::For(n, body) => {

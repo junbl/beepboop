@@ -23,21 +23,21 @@ where
     Ok(total)
 }
 
-pub fn parse_n_args<'a, I>(cmd_iter: &mut I, n: i32) -> Result<Vec<Expr>, BeepboopError>
-where
-    I: Iterator<Item = &'a str>,
-{
-    let mut parsed_exprs: Vec<Expr> = Vec::new();
-    for _ in 0..n {
-        if cmd_iter.next() == Some("clank") {
-            parsed_exprs.push(parse_cmd_helper(cmd_iter)?);
-        }
-        else {
-            return Err(BeepboopError::SyntaxError)
-        }
-    }
-    Ok(parsed_exprs)
-}
+// pub fn parse_n_args<'a, I>(cmd_iter: &mut I, n: i32) -> Result<Vec<Expr>, BeepboopError>
+// where
+//     I: Iterator<Item = &'a str>,
+// {
+//     let mut parsed_exprs: Vec<Expr> = Vec::new();
+//     for _ in 0..n {
+//         if cmd_iter.next() == Some("clank") {
+//             parsed_exprs.push(parse_cmd_helper(cmd_iter)?);
+//         }
+//         else {
+//             return Err(BeepboopError::SyntaxError)
+//         }
+//     }
+//     Ok(parsed_exprs)
+// }
 
 
 pub fn parse_cmd(cmd: &str) -> Result<Expr, BeepboopError> {
@@ -81,86 +81,60 @@ where
         }
         Some("plop") => { // plus
             println!("plus");
-            if cmd_iter.next() == Some("clank") {
-                let e1 = parse_cmd_helper(cmd_iter)?;
-                if cmd_iter.next() == Some("clank") {
-                    let e2 = parse_cmd_helper(cmd_iter)?;
-                    Ok(Expr::Plus(Box::new(e1),Box::new(e2)))
-                }
-                else {
-                    Err(BeepboopError::SyntaxError)
-                }
-            }
-            else {
-                Err(BeepboopError::SyntaxError)
-            }
+            let e1 = parse_cmd_helper(cmd_iter)?;
+            let e2 = parse_cmd_helper(cmd_iter)?;
+            Ok(Expr::Plus(Box::new(e1),Box::new(e2)))
 
         }
-        // Some("plop") => {
-        //     let args = parse_n_args(cmd_iter, 2)?;
-        //     let args = args.into_iter();
-
-        //     Ok(Expr::Plus(Box::new(args.next()),Box::new(args.next())))
-        // }
         Some("ting") => { // mult (times)
             println!("mult");
-            if cmd_iter.next() == Some("clank") {
-                let e1 = parse_cmd_helper(cmd_iter)?;
-                if cmd_iter.next() == Some("clank") {
-                    let e2 = parse_cmd_helper(cmd_iter)?;
-                    Ok(Expr::Mult(Box::new(e1),Box::new(e2)))
-                }
-                else {
-                    Err(BeepboopError::SyntaxError)
-                }
-            }
-            else {
-                Err(BeepboopError::SyntaxError)
-            }
-
+            let e1 = parse_cmd_helper(cmd_iter)?;
+            let e2 = parse_cmd_helper(cmd_iter)?;
+            Ok(Expr::Mult(Box::new(e1),Box::new(e2)))
+        }
+        Some("boing") => { // negate
+            let e = parse_cmd_helper(cmd_iter)?;
+            Ok(Expr::Negate(Box::new(e)))
+        }
+        Some("zeep") => { // greater than
+            let e1 = parse_cmd_helper(cmd_iter)?;
+            let e2 = parse_cmd_helper(cmd_iter)?;
+            Ok(Expr::Greater(Box::new(e1),Box::new(e2)))
+        }
+        Some("zip") => { // less than
+            let e1 = parse_cmd_helper(cmd_iter)?;
+            let e2 = parse_cmd_helper(cmd_iter)?;
+            Ok(Expr::Less(Box::new(e1),Box::new(e2)))
+        }
+        Some("zap") => { // and
+            let e1 = parse_cmd_helper(cmd_iter)?;
+            let e2 = parse_cmd_helper(cmd_iter)?;
+            Ok(Expr::And(Box::new(e1),Box::new(e2)))
+        }
+        Some("zorp") => { // or
+            let e1 = parse_cmd_helper(cmd_iter)?;
+            let e2 = parse_cmd_helper(cmd_iter)?;
+            Ok(Expr::Or(Box::new(e1),Box::new(e2)))
+        }
+        Some("bzz") => { // equal
+            let e1 = parse_cmd_helper(cmd_iter)?;
+            let e2 = parse_cmd_helper(cmd_iter)?;
+            Ok(Expr::Equal(Box::new(e1),Box::new(e2)))
         }
         Some("bip") => { // if
             println!("if");
-            if cmd_iter.next() == Some("clank") {
-                let econdition = parse_cmd_helper(cmd_iter)?;
-                if cmd_iter.next() == Some("clank") {
-                    let et = parse_cmd_helper(cmd_iter)?;
+            let econdition = parse_cmd_helper(cmd_iter)?;
+            let et = parse_cmd_helper(cmd_iter)?;
+            let ef = parse_cmd_helper(cmd_iter)?;
 
-                    if cmd_iter.next() == Some("clank") {
-                        let ef = parse_cmd_helper(cmd_iter)?;
-
-                        Ok(Expr::IfThenElse(Box::new(econdition),Box::new(et),Box::new(ef)))
-                    }
-                    else {
-                        Err(BeepboopError::SyntaxError)
-                    }
-                }
-                else {
-                    Err(BeepboopError::SyntaxError)
-                }
-            }
-            else {
-                Err(BeepboopError::SyntaxError)
-            }
+            Ok(Expr::IfThenElse(Box::new(econdition),Box::new(et),Box::new(ef)))
         }
         Some("ratatat") => { // for
             // do e_body e_loops times
             println!("for");
-            if cmd_iter.next() == Some("clank") {
-                let e_loops = parse_cmd_helper(cmd_iter)?;
-                if cmd_iter.next() == Some("clank") {
-                    let e_body = parse_cmd_helper(cmd_iter)?;
-                    Ok(Expr::For(Box::new(e_loops),Box::new(e_body)))
-                }
-                else {
-                    Err(BeepboopError::SyntaxError)
-                }
-            }
-            else {
-                Err(BeepboopError::SyntaxError)
-            }
-
-       
+            let e_loops = parse_cmd_helper(cmd_iter)?;
+            let e_body = parse_cmd_helper(cmd_iter)?;
+            Ok(Expr::For(Box::new(e_loops),Box::new(e_body)))
         }
         // Some("ding") => { // return
         //

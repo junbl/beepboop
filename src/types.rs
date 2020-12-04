@@ -13,11 +13,11 @@ pub enum Expr {
     Negate(Box<Expr>),
     IfThenElse(Box<Expr>,Box<Expr>,Box<Expr>),
     For(Box<Expr>,Box<Expr>),
-    // Expr::And(expr1, expr2)
-    // Expr::Or(expr1, expr2)
-    // Expr::Equals(expr1, expr2)
-    // Expr::Greater(expr1, expr2)
-    // Expr::Less(expr1, expr2)
+    And(Box<Expr>,Box<Expr>),
+    Or(Box<Expr>,Box<Expr>),
+    Equal(Box<Expr>,Box<Expr>),
+    Greater(Box<Expr>,Box<Expr>),
+    Less(Box<Expr>,Box<Expr>),
     // Expr::Function(arg, body, state)
     // Expr::Fold(initial, list, function)
 }
@@ -30,7 +30,7 @@ pub enum Expr {
 #[derive(Copy, Clone,Debug,PartialEq)]
 pub enum Value {
     Num(i32),
-    // Bin(bool),
+    Bin(bool),
     // Str(String),
 }
 
