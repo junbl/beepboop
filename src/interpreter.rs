@@ -101,6 +101,7 @@ impl ProgramState {
                 let v2 = self.eval(*expr2)?;
                 match (v1,v2) {
                     (Value::Bin(b1),Value::Bin(b2)) => Ok(Value::Bin(b1 && b2)),
+                    (Value::Num(n1),Value::Num(n2)) => Ok(Value::Bin(n1 != 0 && n2 != 0)),
                     _other => Err(BeepboopError::SyntaxError),
                 }
             }
@@ -109,6 +110,7 @@ impl ProgramState {
                 let v2 = self.eval(*expr2)?;
                 match (v1,v2) {
                     (Value::Bin(b1),Value::Bin(b2)) => Ok(Value::Bin(b1 || b2)),
+                    (Value::Num(n1),Value::Num(n2)) => Ok(Value::Bin(n1 != 0 || n2 != 0)),
                     _other => Err(BeepboopError::SyntaxError),
                 }
             }
@@ -160,25 +162,26 @@ impl ProgramState {
                 }
             }
             Expr::For(n, body) => {
-                if let Value::Num(vn) = self.eval(*n)? {
-                    if vn < 1 {
-                        // println!("where at dog");
-                        Err(BeepboopError::SyntaxError)
+                let mut result = self.eval(*body.clone())?;
+                let mut vn = self.eval(*n.clone())?;
+                let mut loops_done = 1;
+                loop {
+                    if let Value::Num(n_loops) = vn {
+                        println!("loops left: {}",n_loops - loops_done);
+                        if n_loops > loops_done {
+                            result = self.eval(*body.clone())?;
+                            vn = self.eval(*n.clone())?;
+                            loops_done += 1;
+                        }
+                        else {
+                            break;
+                        }
                     }
                     else {
-                        let mut result = self.eval(*body.clone())?;
-
-                        for _ in 1..vn {
-                            // should modify program state
-                            result = self.eval(*body.clone())?;
-                        }
-                        Ok(result)
+                        return Err(BeepboopError::SyntaxError);
                     }
                 }
-                else {
-                    Err(BeepboopError::SyntaxError)
-                }
-
+                Ok(result)
             }
             // Expr::Function(arg, body, state)
             // Expr::Fold(initial, list, function)

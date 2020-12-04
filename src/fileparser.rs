@@ -51,8 +51,8 @@ where
 {
     match cmd_iter.next() {
         Some("boop") => { // numbers
-            println!("number");
             let target_num: i32 = parse_num(cmd_iter)?;
+            println!("number: {}",target_num);
             Ok(Expr::Const(target_num))
         }
         // Some("beep") => { // numbers
@@ -93,30 +93,36 @@ where
             Ok(Expr::Mult(Box::new(e1),Box::new(e2)))
         }
         Some("boing") => { // negate
+            println!("negate");
             let e = parse_cmd_helper(cmd_iter)?;
             Ok(Expr::Negate(Box::new(e)))
         }
         Some("zeep") => { // greater than
+            println!("greater");
             let e1 = parse_cmd_helper(cmd_iter)?;
             let e2 = parse_cmd_helper(cmd_iter)?;
             Ok(Expr::Greater(Box::new(e1),Box::new(e2)))
         }
         Some("zip") => { // less than
+            println!("less");
             let e1 = parse_cmd_helper(cmd_iter)?;
             let e2 = parse_cmd_helper(cmd_iter)?;
             Ok(Expr::Less(Box::new(e1),Box::new(e2)))
         }
         Some("zap") => { // and
+            println!("and");
             let e1 = parse_cmd_helper(cmd_iter)?;
             let e2 = parse_cmd_helper(cmd_iter)?;
             Ok(Expr::And(Box::new(e1),Box::new(e2)))
         }
         Some("zorp") => { // or
+            println!("or");
             let e1 = parse_cmd_helper(cmd_iter)?;
             let e2 = parse_cmd_helper(cmd_iter)?;
             Ok(Expr::Or(Box::new(e1),Box::new(e2)))
         }
         Some("bzz") => { // equal
+            println!("equal");
             let e1 = parse_cmd_helper(cmd_iter)?;
             let e2 = parse_cmd_helper(cmd_iter)?;
             Ok(Expr::Equal(Box::new(e1),Box::new(e2)))
@@ -147,9 +153,9 @@ where
         // }
         None => {
             eprintln!("tried to parse empty string");
-            Err(BeepboopError::SyntaxError)
+            Err(BeepboopError::ParseError)
         },
-        _ => Err(BeepboopError::SyntaxError),
+        _ => Err(BeepboopError::ParseError),
     }
 }
 
