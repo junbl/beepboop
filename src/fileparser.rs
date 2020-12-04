@@ -143,7 +143,7 @@ where
                 Err(BeepboopError::SyntaxError)
             }
         }
-        Some("bop") => { // for
+        Some("ratatat") => { // for
             // do e_body e_loops times
             println!("for");
             if cmd_iter.next() == Some("clank") {
