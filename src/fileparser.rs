@@ -17,19 +17,28 @@ where
             "beep" => total = (total << 1) + 1,
             "boop" => total = total << 1,
             "clonk" => break,
-            other => break,
+            _other => break,
         }
     }
     Ok(total)
 }
 
-// pub fn parse_if_then_else<'a, I>(iter: &mut I) -> Result<Expr, BeepboopError>
-// where
-//     I: Iterator<Item = &'a str>,
-// {
+pub fn parse_n_args<'a, I>(cmd_iter: &mut I, n: i32) -> Result<Vec<Expr>, BeepboopError>
+where
+    I: Iterator<Item = &'a str>,
+{
+    let mut parsed_exprs: Vec<Expr> = Vec::new();
+    for _ in 0..n {
+        if cmd_iter.next() == Some("clank") {
+            parsed_exprs.push(parse_cmd_helper(cmd_iter)?);
+        }
+        else {
+            return Err(BeepboopError::SyntaxError)
+        }
+    }
+    Ok(parsed_exprs)
+}
 
-
-// }
 
 pub fn parse_cmd(cmd: &str) -> Result<Expr, BeepboopError> {
     let mut cmd_iter = cmd.split_whitespace().into_iter();
@@ -42,6 +51,7 @@ where
 {
     match cmd_iter.next() {
         Some("boop") => { // numbers
+            println!("number");
             let target_num: i32 = parse_num(cmd_iter)?;
             Ok(Expr::Const(target_num))
         }
@@ -50,6 +60,7 @@ where
         //     Ok(Expr::Const(target_num))
         // }
         Some("whirr") => { // variable assignment
+            println!("assign");
             if let Some(var_name) = cmd_iter.next() {
                 let target_expr = parse_cmd_helper(cmd_iter)?;
                 Ok(Expr::Assign(var_name.to_string(),
@@ -59,8 +70,17 @@ where
                 Err(BeepboopError::ParseError)
             }
         },
+        Some("brrring") => {
+            println!("lookup");
+            if let Some(var_name) = cmd_iter.next() {
+                Ok(Expr::Lookup(var_name.to_string()))
+            }
+            else {
+                Err(BeepboopError::ParseError)
+            }
+        }
         Some("plop") => { // plus
-            // println!("addition");
+            println!("plus");
             if cmd_iter.next() == Some("clank") {
                 let e1 = parse_cmd_helper(cmd_iter)?;
                 if cmd_iter.next() == Some("clank") {
@@ -68,17 +88,22 @@ where
                     Ok(Expr::Plus(Box::new(e1),Box::new(e2)))
                 }
                 else {
-                    // println!("2");
                     Err(BeepboopError::SyntaxError)
                 }
             }
             else {
-                // println!("1");
                 Err(BeepboopError::SyntaxError)
             }
 
         }
+        // Some("plop") => {
+        //     let args = parse_n_args(cmd_iter, 2)?;
+        //     let args = args.into_iter();
+
+        //     Ok(Expr::Plus(Box::new(args.next()),Box::new(args.next())))
+        // }
         Some("ting") => { // mult (times)
+            println!("mult");
             if cmd_iter.next() == Some("clank") {
                 let e1 = parse_cmd_helper(cmd_iter)?;
                 if cmd_iter.next() == Some("clank") {
@@ -95,6 +120,7 @@ where
 
         }
         Some("bip") => { // if
+            println!("if");
             if cmd_iter.next() == Some("clank") {
                 let econdition = parse_cmd_helper(cmd_iter)?;
                 if cmd_iter.next() == Some("clank") {
@@ -117,9 +143,25 @@ where
                 Err(BeepboopError::SyntaxError)
             }
         }
-        // Some("bop") => { // for
-        //
-        // }
+        Some("bop") => { // for
+            // do e_body e_loops times
+            println!("for");
+            if cmd_iter.next() == Some("clank") {
+                let e_loops = parse_cmd_helper(cmd_iter)?;
+                if cmd_iter.next() == Some("clank") {
+                    let e_body = parse_cmd_helper(cmd_iter)?;
+                    Ok(Expr::For(Box::new(e_loops),Box::new(e_body)))
+                }
+                else {
+                    Err(BeepboopError::SyntaxError)
+                }
+            }
+            else {
+                Err(BeepboopError::SyntaxError)
+            }
+
+       
+        }
         // Some("ding") => { // return
         //
         // }
@@ -130,7 +172,7 @@ where
        
         // }
         None => {
-            println!("tried to parse empty string");
+            eprintln!("tried to parse empty string");
             Err(BeepboopError::SyntaxError)
         },
         _ => Err(BeepboopError::SyntaxError),

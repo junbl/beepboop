@@ -87,6 +87,15 @@ impl ProgramState {
                     _other => Err(BeepboopError::SyntaxError),
                 }
             }
+            Expr::Negate(expr) => {
+                if let Value::Num(v) = self.eval(*expr)? {
+                    Ok(Value::Num(-v))
+                }
+                else {
+                    Err(BeepboopError::SyntaxError)
+                }
+
+            }
             // Expr::And(expr1, expr2)
             // Expr::Or(expr1, expr2)
             // Expr::Equals(expr1, expr2)
@@ -101,7 +110,27 @@ impl ProgramState {
                     self.eval(*if_true)
                 }
             }
-            // Expr::For(iter, range, expr)
+            Expr::For(n, body) => {
+                if let Value::Num(vn) = self.eval(*n)? {
+                    if vn < 1 {
+                        // println!("where at dog");
+                        Err(BeepboopError::SyntaxError)
+                    }
+                    else {
+                        let mut result = self.eval(*body.clone())?;
+
+                        for _ in 1..vn {
+                            // should modify program state
+                            result = self.eval(*body.clone())?;
+                        }
+                        Ok(result)
+                    }
+                }
+                else {
+                    Err(BeepboopError::SyntaxError)
+                }
+
+            }
             // Expr::Function(arg, body, state)
             // Expr::Fold(initial, list, function)
         }

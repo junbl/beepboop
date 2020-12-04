@@ -3,21 +3,21 @@ use std::fmt;
 
 // pub mod types {
 // #[derive(Copy, Clone)]
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub enum Expr {
     Assign(String,Box<Expr>),
     Lookup(String),
     Const(i32),
     Plus(Box<Expr>,Box<Expr>),
     Mult(Box<Expr>,Box<Expr>),
+    Negate(Box<Expr>),
     IfThenElse(Box<Expr>,Box<Expr>,Box<Expr>),
+    For(Box<Expr>,Box<Expr>),
     // Expr::And(expr1, expr2)
     // Expr::Or(expr1, expr2)
     // Expr::Equals(expr1, expr2)
     // Expr::Greater(expr1, expr2)
     // Expr::Less(expr1, expr2)
-    // Expr::IfThenElse(condition, if_true, if_false)
-    // Expr::For(iter, range, expr)
     // Expr::Function(arg, body, state)
     // Expr::Fold(initial, list, function)
 }
