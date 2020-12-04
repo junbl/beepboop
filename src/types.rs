@@ -28,13 +28,20 @@ pub enum Expr {
 #[derive(Copy, Clone,Debug,PartialEq)]
 pub enum Value {
     Num(i32),
-    Bin(bool),
+    // Bin(bool),
     // Str(String),
 }
 #[derive(Debug,PartialEq)]
 pub enum BeepboopError {
     ParseError,
     SyntaxError,
+}
+
+#[derive(Debug)]
+pub enum ParseResult<T, U, V> {
+    Ok(T),
+    Continue(U),
+    Err(V),
 }
 
 impl Error for BeepboopError {

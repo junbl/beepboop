@@ -7,17 +7,19 @@ use crate::interpreter;
 
 // pub mod fileparser {
 
-pub fn parse_num<'a, I>(num_iter: I) -> Result<i32, BeepboopError>
+pub fn parse_num<'a, I>(num_iter: &mut I) -> Result<i32, BeepboopError>
 where
     I: Iterator<Item = &'a str>,
 {
-    num_iter.fold(Ok(0),|total,digit| -> Result<i32, BeepboopError> {
+    let mut total = 0;
+    while let Some(digit) = num_iter.next() {
         match digit {
-            "beep" => Ok((total? << 1) + 1),
-            "boop" => Ok(total? << 1),
-            other => Err(BeepboopError::ParseError), //TODO return iterator. no err handling in here
+            "beep" => total = (total << 1) + 1,
+            "boop" => total = total << 1,
+            other => break,
         }
-    })
+    }
+    Ok(total)
 }
 
 pub fn parse_cmd(cmd: &str) -> Result<Expr, BeepboopError> {
@@ -25,7 +27,7 @@ pub fn parse_cmd(cmd: &str) -> Result<Expr, BeepboopError> {
     match cmd_iter.next() {
         Some("whirr") => {
             if let Some(var_name) = cmd_iter.next() {
-                let target_num: i32 = parse_num(cmd_iter)?;
+                let target_num: i32 = parse_num(&mut cmd_iter)?;
                 Ok(Expr::Assign(var_name.to_string(),
                     Box::new(Expr::Const(target_num))))
             }
