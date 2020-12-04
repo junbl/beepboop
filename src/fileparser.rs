@@ -22,33 +22,58 @@ where
     Ok(total)
 }
 
+// pub fn parse_if_then_else<'a, I>(iter: &mut I) -> Result<Expr, BeepboopError>
+// where
+//     I: Iterator<Item = &'a str>,
+// {
+
+
+// }
+
 pub fn parse_cmd(cmd: &str) -> Result<Expr, BeepboopError> {
     let mut cmd_iter = cmd.split_whitespace().into_iter();
+    parse_cmd_helper(&mut cmd_iter)
+}
+
+pub fn parse_cmd_helper<'a, I>(mut cmd_iter: I) -> Result<Expr, BeepboopError>
+where
+    I: Iterator<Item = &'a str>,
+{
     match cmd_iter.next() {
-        Some("whirr") => {
+        Some("boop") => { // numbers
+            let target_num: i32 = parse_num(&mut cmd_iter)?;
+            Ok(Expr::Const(target_num))
+        }
+        // Some("beep") => { // numbers
+        //     let target_num: i32 = (parse_num(&mut cmd_iter)? << 1) + 1;
+        //     Ok(Expr::Const(target_num))
+        // }
+        Some("whirr") => { // variable assignment
             if let Some(var_name) = cmd_iter.next() {
-                let target_num: i32 = parse_num(&mut cmd_iter)?;
+                let target_expr = parse_cmd_helper(cmd_iter)?;
                 Ok(Expr::Assign(var_name.to_string(),
-                    Box::new(Expr::Const(target_num))))
+                    Box::new(target_expr)))
             }
             else {
                 Err(BeepboopError::ParseError)
             }
         },
-        // Some("bop") => { // for
-        //
-        // }
         // Some("bip") => { // if
+        //     if cmd_iter.next() == Some("clank") {
+        //         let result = parse_if_then_else(&mut cmd_iter)?;
+        //     }
+        // }
+        // Some("bop") => { // for
         //
         // }
         // Some("ding") => { // return
         //
         // }
-        // Some("clank") => { // open parenthesis
-        //
-        // }
+        Some("clank") => { // open parenthesis
+            parse_cmd_helper(cmd_iter)
+        }
         // Some("clonk") => { // close parenthesis
-        //
+       
         // }
         None => Err(BeepboopError::SyntaxError),
         _ => Err(BeepboopError::SyntaxError),

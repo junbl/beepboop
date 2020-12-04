@@ -10,7 +10,7 @@ pub enum Expr {
     Const(i32),
     Plus(Box<Expr>,Box<Expr>),
     Mult(Box<Expr>,Box<Expr>),
-    // IfThenElse(Box<Expr>,Box<Expr>,Box<Expr>),
+    IfThenElse(Box<Expr>,Box<Expr>,Box<Expr>),
     // Expr::And(expr1, expr2)
     // Expr::Or(expr1, expr2)
     // Expr::Equals(expr1, expr2)
@@ -25,23 +25,20 @@ pub enum Expr {
 //     Empty,
 //     Cons(Expr,Box<List<T>>),
 // }
+
+
 #[derive(Copy, Clone,Debug,PartialEq)]
 pub enum Value {
     Num(i32),
     // Bin(bool),
     // Str(String),
 }
+
+
 #[derive(Debug,PartialEq)]
 pub enum BeepboopError {
     ParseError,
     SyntaxError,
-}
-
-#[derive(Debug)]
-pub enum ParseResult<T, U, V> {
-    Ok(T),
-    Continue(U),
-    Err(V),
 }
 
 impl Error for BeepboopError {

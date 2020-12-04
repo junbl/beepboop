@@ -92,7 +92,15 @@ impl ProgramState {
             // Expr::Equals(expr1, expr2)
             // Expr::Greater(expr1, expr2)
             // Expr::Less(expr1, expr2)
-            // Expr::IfThenElse(condition, if_true, if_false)
+            Expr::IfThenElse(condition, if_true, if_false) => {
+                let vcon = self.eval(*condition)?;
+                if vcon == Value::Num(0) {
+                    self.eval(*if_true)
+                }
+                else {
+                    self.eval(*if_false)
+                }
+            }
             // Expr::For(iter, range, expr)
             // Expr::Function(arg, body, state)
             // Expr::Fold(initial, list, function)
