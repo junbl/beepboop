@@ -4,6 +4,8 @@ beep boop bop ding ding whirr
 
 ## Basics
 
+Integer literals are created in a binary representation, where beep represents a 1 and boop represents zero. E.g. 13 could be represented as `beep beep boop beep`.
+
 Variable assignment:
 
     whirr <var> <value>
