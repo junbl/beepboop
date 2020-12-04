@@ -16,6 +16,7 @@ where
         match digit {
             "beep" => total = (total << 1) + 1,
             "boop" => total = total << 1,
+            "clonk" => break,
             other => break,
         }
     }
@@ -35,13 +36,13 @@ pub fn parse_cmd(cmd: &str) -> Result<Expr, BeepboopError> {
     parse_cmd_helper(&mut cmd_iter)
 }
 
-pub fn parse_cmd_helper<'a, I>(mut cmd_iter: I) -> Result<Expr, BeepboopError>
+pub fn parse_cmd_helper<'a, I>(cmd_iter: &mut I) -> Result<Expr, BeepboopError>
 where
     I: Iterator<Item = &'a str>,
 {
     match cmd_iter.next() {
         Some("boop") => { // numbers
-            let target_num: i32 = parse_num(&mut cmd_iter)?;
+            let target_num: i32 = parse_num(cmd_iter)?;
             Ok(Expr::Const(target_num))
         }
         // Some("beep") => { // numbers
@@ -58,6 +59,41 @@ where
                 Err(BeepboopError::ParseError)
             }
         },
+        Some("plop") => { // plus
+            // println!("addition");
+            if cmd_iter.next() == Some("clank") {
+                let e1 = parse_cmd_helper(cmd_iter)?;
+                if cmd_iter.next() == Some("clank") {
+                    let e2 = parse_cmd_helper(cmd_iter)?;
+                    Ok(Expr::Plus(Box::new(e1),Box::new(e2)))
+                }
+                else {
+                    // println!("2");
+                    Err(BeepboopError::SyntaxError)
+                }
+            }
+            else {
+                // println!("1");
+                Err(BeepboopError::SyntaxError)
+            }
+
+        }
+        Some("ting") => { // mult (times)
+            if cmd_iter.next() == Some("clank") {
+                let e1 = parse_cmd_helper(cmd_iter)?;
+                if cmd_iter.next() == Some("clank") {
+                    let e2 = parse_cmd_helper(cmd_iter)?;
+                    Ok(Expr::Mult(Box::new(e1),Box::new(e2)))
+                }
+                else {
+                    Err(BeepboopError::SyntaxError)
+                }
+            }
+            else {
+                Err(BeepboopError::SyntaxError)
+            }
+
+        }
         // Some("bip") => { // if
         //     if cmd_iter.next() == Some("clank") {
         //         let result = parse_if_then_else(&mut cmd_iter)?;
@@ -75,7 +111,10 @@ where
         // Some("clonk") => { // close parenthesis
        
         // }
-        None => Err(BeepboopError::SyntaxError),
+        None => {
+            println!("tried to parse empty string");
+            Err(BeepboopError::SyntaxError)
+        },
         _ => Err(BeepboopError::SyntaxError),
     }
 }
