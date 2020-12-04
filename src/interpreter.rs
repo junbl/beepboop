@@ -95,10 +95,10 @@ impl ProgramState {
             Expr::IfThenElse(condition, if_true, if_false) => {
                 let vcon = self.eval(*condition)?;
                 if vcon == Value::Num(0) {
-                    self.eval(*if_true)
+                    self.eval(*if_false)
                 }
                 else {
-                    self.eval(*if_false)
+                    self.eval(*if_true)
                 }
             }
             // Expr::For(iter, range, expr)

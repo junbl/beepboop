@@ -94,11 +94,29 @@ where
             }
 
         }
-        // Some("bip") => { // if
-        //     if cmd_iter.next() == Some("clank") {
-        //         let result = parse_if_then_else(&mut cmd_iter)?;
-        //     }
-        // }
+        Some("bip") => { // if
+            if cmd_iter.next() == Some("clank") {
+                let econdition = parse_cmd_helper(cmd_iter)?;
+                if cmd_iter.next() == Some("clank") {
+                    let et = parse_cmd_helper(cmd_iter)?;
+
+                    if cmd_iter.next() == Some("clank") {
+                        let ef = parse_cmd_helper(cmd_iter)?;
+
+                        Ok(Expr::IfThenElse(Box::new(econdition),Box::new(et),Box::new(ef)))
+                    }
+                    else {
+                        Err(BeepboopError::SyntaxError)
+                    }
+                }
+                else {
+                    Err(BeepboopError::SyntaxError)
+                }
+            }
+            else {
+                Err(BeepboopError::SyntaxError)
+            }
+        }
         // Some("bop") => { // for
         //
         // }
