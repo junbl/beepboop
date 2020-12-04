@@ -92,7 +92,7 @@ impl ProgramState {
                 match val {
                     Value::Num(n) => Ok(Value::Num(-n)),
                     Value::Bin(b) => Ok(Value::Bin(!b)),
-                    _other => Err(BeepboopError::SyntaxError),
+                    // _other => Err(BeepboopError::SyntaxError),
                 }
 
             }
@@ -158,7 +158,7 @@ impl ProgramState {
                             self.eval(*if_false)
                         }
                     }
-                    _other => Err(BeepboopError::SyntaxError),
+                    // _other => Err(BeepboopError::SyntaxError),
                 }
             }
             Expr::For(n, body) => {
