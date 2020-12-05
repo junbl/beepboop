@@ -165,7 +165,7 @@ impl ProgramState {
                 let mut loops_done = 1;
                 loop {
                     if let Value::Num(n_loops) = vn {
-                        println!("loops left: {}",n_loops - loops_done);
+                        // println!("loops left: {}",n_loops - loops_done);
                         if n_loops > loops_done {
                             result = self.eval(*body.clone())?;
                             vn = self.eval(*n.clone())?;
