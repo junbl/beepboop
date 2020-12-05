@@ -3,15 +3,15 @@ beep boop bop ding ding whirr
 
 To compile:
 
-    cargo build
+    cargo build --release
 
 If you have cargo installed, you can run with:
 
     cargo run [files]
 
-Otherwise, a binary is provided in `./target/debug`, which can be run with
+Otherwise, a binary is provided in `./target/release`, which can be run with
 
-    ./target/debug/beepboop [files]
+    ./target/release/beepboop [files]
 
 Beepboop code files can be found in the `code` folder.
 
