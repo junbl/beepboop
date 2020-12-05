@@ -9,12 +9,13 @@ fn main() {
     arguments.next();
     for file in arguments {
         println!("parsing file {:?}",file);
+
         let bbfile = fileparser::BeepboopFile::new(file);
 
         let program = bbfile.parse_file();
         let final_state = program.run_program();
+
         println!("{:?}",final_state);
 
     }
-    // println!("{:?}",args);
 }

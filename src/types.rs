@@ -31,7 +31,6 @@ pub enum Expr {
 pub enum Value {
     Num(i32),
     Bin(bool),
-    // Str(String),
 }
 
 
