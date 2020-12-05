@@ -2,7 +2,6 @@ use std::error::Error;
 use std::fmt;
 
 // pub mod types {
-// #[derive(Copy, Clone)]
 #[derive(PartialEq, Clone)]
 pub enum Expr {
     Assign(String,Box<Expr>),
