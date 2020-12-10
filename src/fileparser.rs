@@ -1,9 +1,9 @@
-use std::fs::File;
-use std::io::BufReader;
-use std::io::BufRead;
+use crate::interpreter;
 use crate::types::BeepboopError;
 use crate::types::Expr;
-use crate::interpreter;
+use std::fs::File;
+use std::io::BufRead;
+use std::io::BufReader;
 
 // pub mod fileparser {
 
@@ -33,105 +33,117 @@ where
     I: Iterator<Item = &'a str>,
 {
     match cmd_iter.next() {
-        Some("boop") => { // numbers
+        Some("boop") => {
+            // numbers
             let target_num: i32 = parse_num(cmd_iter)?;
-            println!("number: {}",target_num);
+            println!("number: {}", target_num);
             Ok(Expr::Const(target_num))
-        },
-        Some("whirr") => { // variable assignment
+        }
+        Some("whirr") => {
+            // variable assignment
             println!("assign");
             if let Some(var_name) = cmd_iter.next() {
                 let target_expr = parse_cmd_helper(cmd_iter)?;
-                Ok(Expr::Assign(var_name.to_string(),
-                    Box::new(target_expr)))
-            }
-            else {
+                Ok(Expr::Assign(var_name.to_string(), Box::new(target_expr)))
+            } else {
                 Err(BeepboopError::ParseError)
             }
-        },
+        }
         Some("brrring") => {
             println!("lookup");
             if let Some(var_name) = cmd_iter.next() {
                 Ok(Expr::Lookup(var_name.to_string()))
-            }
-            else {
+            } else {
                 Err(BeepboopError::ParseError)
             }
         }
-        Some("plop") => { // plus
+        Some("plop") => {
+            // plus
             println!("plus");
             let e1 = parse_cmd_helper(cmd_iter)?;
             let e2 = parse_cmd_helper(cmd_iter)?;
-            Ok(Expr::Plus(Box::new(e1),Box::new(e2)))
-
+            Ok(Expr::Plus(Box::new(e1), Box::new(e2)))
         }
-        Some("ting") => { // mult (times)
+        Some("ting") => {
+            // mult (times)
             println!("mult");
             let e1 = parse_cmd_helper(cmd_iter)?;
             let e2 = parse_cmd_helper(cmd_iter)?;
-            Ok(Expr::Mult(Box::new(e1),Box::new(e2)))
+            Ok(Expr::Mult(Box::new(e1), Box::new(e2)))
         }
-        Some("boing") => { // negate
+        Some("boing") => {
+            // negate
             println!("negate");
             let e = parse_cmd_helper(cmd_iter)?;
             Ok(Expr::Negate(Box::new(e)))
         }
-        Some("zeep") => { // greater than
+        Some("zeep") => {
+            // greater than
             println!("greater");
             let e1 = parse_cmd_helper(cmd_iter)?;
             let e2 = parse_cmd_helper(cmd_iter)?;
-            Ok(Expr::Greater(Box::new(e1),Box::new(e2)))
+            Ok(Expr::Greater(Box::new(e1), Box::new(e2)))
         }
-        Some("zip") => { // less than
+        Some("zip") => {
+            // less than
             println!("less");
             let e1 = parse_cmd_helper(cmd_iter)?;
             let e2 = parse_cmd_helper(cmd_iter)?;
-            Ok(Expr::Less(Box::new(e1),Box::new(e2)))
+            Ok(Expr::Less(Box::new(e1), Box::new(e2)))
         }
-        Some("zap") => { // and
+        Some("zap") => {
+            // and
             println!("and");
             let e1 = parse_cmd_helper(cmd_iter)?;
             let e2 = parse_cmd_helper(cmd_iter)?;
-            Ok(Expr::And(Box::new(e1),Box::new(e2)))
+            Ok(Expr::And(Box::new(e1), Box::new(e2)))
         }
-        Some("zorp") => { // or
+        Some("zorp") => {
+            // or
             println!("or");
             let e1 = parse_cmd_helper(cmd_iter)?;
             let e2 = parse_cmd_helper(cmd_iter)?;
-            Ok(Expr::Or(Box::new(e1),Box::new(e2)))
+            Ok(Expr::Or(Box::new(e1), Box::new(e2)))
         }
-        Some("bzz") => { // equal
+        Some("bzz") => {
+            // equal
             println!("equal");
             let e1 = parse_cmd_helper(cmd_iter)?;
             let e2 = parse_cmd_helper(cmd_iter)?;
-            Ok(Expr::Equal(Box::new(e1),Box::new(e2)))
+            Ok(Expr::Equal(Box::new(e1), Box::new(e2)))
         }
-        Some("bip") => { // if
+        Some("bip") => {
+            // if
             println!("if");
             let econdition = parse_cmd_helper(cmd_iter)?;
             let et = parse_cmd_helper(cmd_iter)?;
             let ef = parse_cmd_helper(cmd_iter)?;
 
-            Ok(Expr::IfThenElse(Box::new(econdition),Box::new(et),Box::new(ef)))
+            Ok(Expr::IfThenElse(
+                Box::new(econdition),
+                Box::new(et),
+                Box::new(ef),
+            ))
         }
-        Some("ratatat") => { // for
+        Some("ratatat") => {
+            // for
             // do e_body e_loops times
             println!("for");
             let e_loops = parse_cmd_helper(cmd_iter)?;
             let e_body = parse_cmd_helper(cmd_iter)?;
-            Ok(Expr::For(Box::new(e_loops),Box::new(e_body)))
+            Ok(Expr::For(Box::new(e_loops), Box::new(e_body)))
         }
-        Some("clank") => { // open parenthesis
+        Some("clank") => {
+            // open parenthesis
             parse_cmd_helper(cmd_iter)
         }
         None => {
             eprintln!("tried to parse empty string");
             Err(BeepboopError::ParseError)
-        },
+        }
         _ => Err(BeepboopError::ParseError),
     }
 }
-
 
 pub struct BeepboopFile {
     pub lines: Vec<String>,
@@ -146,25 +158,23 @@ impl BeepboopFile {
         for line in f.lines() {
             match line {
                 Ok(l) => {
-                    println!("[read] {}",l);
+                    println!("[read] {}", l);
                     lines.push(l);
-
-                },
-                Err(error) => panic!("Couldn't read file! {}",error),
+                }
+                Err(error) => panic!("Couldn't read file! {}", error),
             }
         }
-        BeepboopFile {lines}
+        BeepboopFile { lines }
     }
     pub fn parse_file(self) -> interpreter::Program {
         let mut expr_vec: Vec<Expr> = Vec::new();
         for line in self.lines {
             match parse_cmd(&line) {
                 Ok(expr) => expr_vec.push(expr),
-                Err(error) => panic!("Error while parsing file! {}",error),
+                Err(error) => panic!("Error while parsing file! {}", error),
             }
         }
         interpreter::Program::new(expr_vec)
     }
-
 }
 // }

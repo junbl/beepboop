@@ -4,19 +4,19 @@ use std::fmt;
 // pub mod types {
 #[derive(PartialEq, Clone)]
 pub enum Expr {
-    Assign(String,Box<Expr>),
+    Assign(String, Box<Expr>),
     Lookup(String),
     Const(i32),
-    Plus(Box<Expr>,Box<Expr>),
-    Mult(Box<Expr>,Box<Expr>),
+    Plus(Box<Expr>, Box<Expr>),
+    Mult(Box<Expr>, Box<Expr>),
     Negate(Box<Expr>),
-    IfThenElse(Box<Expr>,Box<Expr>,Box<Expr>),
-    For(Box<Expr>,Box<Expr>),
-    And(Box<Expr>,Box<Expr>),
-    Or(Box<Expr>,Box<Expr>),
-    Equal(Box<Expr>,Box<Expr>),
-    Greater(Box<Expr>,Box<Expr>),
-    Less(Box<Expr>,Box<Expr>),
+    IfThenElse(Box<Expr>, Box<Expr>, Box<Expr>),
+    For(Box<Expr>, Box<Expr>),
+    And(Box<Expr>, Box<Expr>),
+    Or(Box<Expr>, Box<Expr>),
+    Equal(Box<Expr>, Box<Expr>),
+    Greater(Box<Expr>, Box<Expr>),
+    Less(Box<Expr>, Box<Expr>),
     // Expr::Function(arg, body, state)
     // Expr::Fold(initial, list, function)
 }
@@ -25,15 +25,13 @@ pub enum Expr {
 //     Cons(Expr,Box<List<T>>),
 // }
 
-
-#[derive(Copy, Clone,Debug,PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Value {
     Num(i32),
     Bin(bool),
 }
 
-
-#[derive(Debug,PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum BeepboopError {
     ParseError,
     SyntaxError,
