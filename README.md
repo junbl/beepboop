@@ -1,6 +1,8 @@
 # beepboop
 beep boop bop ding ding whirr
 
+## Overview
+Beepboop is a Turing-complete programming language implemented in Rust, with all syntax elements made up of machine or robot noises.
 
 ## Basics
 
