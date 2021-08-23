@@ -5,6 +5,7 @@ ratatat brrring moop bip zeep brrring ack brrring noing zap whirr ack plop brrri
 
 loop moop times:
     if (greater(ack,noing)):
-        and(ack = plus(ack,negate(noing)), moop = plus(moop,1))
+        and(ack = plus(ack,negate(noing)),
+            moop = plus(moop,1))
     else:
         ding = ack
