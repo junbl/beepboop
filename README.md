@@ -18,6 +18,12 @@ Variable assignment:
 
 Variable names can be arbitrary strings, but convention dictates that they should be in-keeping with the language's robotic aesthetic.
 
+Variable reference:
+
+    brrring <var>
+    
+The variable referenced must be defined or the code will result in a `ParseError`.
+
 If statement:
 
     bip <condition> <value_if_true> <value_if_false>
