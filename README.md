@@ -6,7 +6,7 @@ Beepboop is a minimalist, un-ergonomic (but Turing-complete!) programming langua
 
 ## Basics
 
-Integer literals are created in a binary representation, where beep represents a 1 and boop represents zero. E.g. 13 could be represented as `boop beep beep boop beep`. The leading zero marks it as a number to the parser.
+Integer literals are created in a binary representation, where beep represents 1 and boop represents 0. E.g. 13 could be represented as `boop beep beep boop beep`. The leading zero marks it as a number to the parser.
 
 Boolean literals cannot be directly constructed, because that would be too easy. They are only obtainable as results from logical comparisons, which will coerce integer inputs into booleans where appropriate.
 
