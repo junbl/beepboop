@@ -8,3 +8,10 @@ loop moop times:
         and(ack = plus(ack,negate(noing)), moop = plus(moop,1))
     else:
         ding = ack
+
+
+while true:
+    if ack > noing:
+        ack = ack - noing
+    else:
+        return ack
